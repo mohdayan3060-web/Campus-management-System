@@ -1,13 +1,18 @@
-//Student Module 
+
+    //Student Module 
+    
 import java.util.ArrayList;
 import java.util.Scanner;
-public class StudentManagementSystem{
 
+
+
+public class StudentManagementSystem{
     public static void main(String[] args){
      Scanner scanner= new Scanner(System.in);
 
 
-Student obj= new Student();
+    StudentServices service= new StudentServices();
+
         boolean keepruning=true;
         int choice;
         do { 
@@ -23,19 +28,19 @@ Student obj= new Student();
 
             switch(choice){
                 case 1:
-                    obj.AddStudent();
+                    service.AddStudent();
                     break;
                 case 2:
-                    obj.viewStudent();
+                    service.viewStudent();
                     break;
                 case 3:
-                    obj.SearchStudent();
+                    service.SearchStudent();
                     break;
                 case 4:
-                    obj.UpdateStudentProfile();
+                    service.UpdateStudentProfile();
                     break;
                 case 5:
-                    obj.Delete();
+                    service.Delete();
                     break;
                 case 6:
                     keepruning=false;
@@ -54,55 +59,43 @@ Student obj= new Student();
     }
 }
 
-class Student{
-     Scanner scanner= new Scanner(System.in); 
+class StudentServices  {
+    Scanner scanner= new Scanner(System.in); 
      ArrayList<Student> StudentList=new ArrayList<>();
 
 
-    private String name;
-    private String studentID;
-    private String department;
-    private int semster;
-    private String emailId;
-    private String phoneNumber;
-
-    public Student(String name,String studentID,String department,int semster,String emailID,String phoneNumber) {
-        this.name=name;
-        this.studentID=studentID;
-        this.department=department;
-        this.semster=semster;
-        this.emailId=emailID;
-        this.phoneNumber=phoneNumber;
-
-
-    }
-
-    public Student(){
-
-    }
-
-    
-// ADD new Student  .................
+     // // ADD new Student  .................
 
    void AddStudent(){
      System.err.println("Enter Number Of Student You Want To Add ");
      int numberOfStudent=scanner.nextInt();
      scanner.nextLine();
-     for (int i=0; i<numberOfStudent;i++){
-            System.out.println("Enter Student name ");
+     for (int i=1; i<=numberOfStudent;i++){
+    System.out.println("Enter Student "+ i  +" Data ");
+    System.out.println("Enter Student name ");
     String name=scanner.nextLine();
     System.out.println("Enter Student ID");
     String studentID=scanner.nextLine();
+    if (isDublicateStudent(studentID)==true){
+        System.out.println("This Id alredy exist Please varify your student ID  ...");
+        continue;
+    }
+//  
+
+
     System.out.println("Enter Department :");
     String department= scanner .nextLine();
-    System.out.println("Enter Semster");
+    System.out.println("Enter Semster ( 1 - 8 )");
 
     int semster=scanner.nextInt();
     scanner.nextLine();
+   
     System.out.println("Enter Student Email ID :");
     String emailId =scanner.nextLine();
     System.out.println("Enter Phone number ");
     String phoneNumber=scanner.nextLine();
+    
+
 
     StudentList.add(new Student(name,studentID,department,semster,emailId,phoneNumber));   
 
@@ -110,7 +103,15 @@ class Student{
 
 
    } 
-
+    //prevent from Dublicated Student Id
+    boolean isDublicateStudent(String studentId){
+        for(Student s:StudentList){
+            if (s.getStudentID().equals(studentId)){
+                return true;
+            }
+        }
+        return false;
+    }
    void viewStudent(){
     for( Student s: StudentList){
         System.out.println(s);
@@ -121,24 +122,33 @@ class Student{
 //Search Student .............................
 
    void SearchStudent(){
+    boolean found=false;
    // Search Student through Name  
-  System.out.println("Enter Student Name : ");
-  String name= scanner.nextLine();
+  System.out.println("Enter Student Enrollment ID : ");
+  String enroll= scanner.nextLine();
   for (int i=0; i<StudentList.size();i++){
-        if (StudentList.get(i).name.equals(name)){
+        if (StudentList.get(i).getStudentID().equalsIgnoreCase(enroll)){
+            found=true;
                  System.out.println(StudentList.get(i));
              }
     
   }
+   if(found !=true){
+        System.out.println("Student not Found !!lol");
+    }
+
  
    }
 //Update Student Profile .........................
    void UpdateStudentProfile(){
-     System.out.println("Enter Student Name : ");
-     String name =scanner.nextLine();
+     
+     System.out.println("Enter Student ID :");
+     String enroll=scanner.nextLine();
+     boolean found=false;
      for (int i=0; i<StudentList.size();i++){
-           if (StudentList.get(i).name.equals(name)){
+           if ( StudentList.get(i).getStudentID().equalsIgnoreCase(enroll)){
         boolean keepruning=true;
+        found=true;
         int choice;
 
         do {
@@ -153,58 +163,170 @@ class Student{
             switch(choice){
                 case 1:
                     System.out.println("Enter Your Current Semster");
-                    int semster= scanner.nextByte();
+                    int semester= scanner.nextByte();
                     scanner.nextLine();
-                    StudentList.get(i).semster= semster;
-                    System.out.println("Your Updated Semster is :"+StudentList.get(i).semster);
+                    StudentList.get(i).setSemester(semester);
+                    System.out.println("Your Updated Semster is :"+StudentList.get(i).getSemester());
                     break;
 
                 case 2:
                     System.out.println("Enter Your New Email :");
                     String email=scanner.nextLine();
-                    StudentList.get(i).emailId=email;
-                    System.out.println("Your Updated Email-ID : "+StudentList.get(i).emailId);
+                    StudentList.get(i).setEmail(email);
+                    System.out.println("Your Updated Email-ID : "+StudentList.get(i).getEmail());
                     break;
                 case 3:
                     System.out.println("Enter Your New Phone Number: ");
                     String pNumber= scanner.nextLine();
-                    StudentList.get(i).phoneNumber=pNumber;
-                    System.out.println("You Updated Phone Numebr : "+StudentList.get(i).phoneNumber);
+                    StudentList.get(i).setPhoneNumber(pNumber);
+                    System.out.println("You Updated Phone Numebr : "+StudentList.get(i).getPhoneNumber());
                     break;  
 
                 case 4:
                     keepruning =false;
-                    return;
+                    break;
 
                 
 
             }
 
-            
-        } while (true);
-           }
-     }
 
+
+            
+        } while (keepruning);
+
+           }
+         
+     }
+        if (found !=true){
+            System.out.println("Please varify you detailed ");
+        }
    }
 
    //Delete particualr Field......
    void Delete(){
-    System.out.println("Enter Student Name You want to Deleate from DataSets :");
-    String name = scanner.nextLine();
+    System.out.println("Enter Student ID : ");
+    String enroll  = scanner.nextLine();
+    boolean found=false;
+
     for(int i=0; i<StudentList.size();i++){
-         if(StudentList.get(i).name.equals(name)){
+         if(StudentList.get(i).getStudentID().equals(enroll)){
+            found=true;
             StudentList.remove(i);
             System.out.println("Field is Deleated .....");
          }
+
+    }
+    if(found !=true){
+        System.out.println("Student not Found !!lol");
     }
 
    }
 
-@Override  
-public String toString(){
- return ("Name  :"+this.name+" Student ID : "+ this.studentID+" , Department :  " +this.department+" , Semester :  " +this.semster+" , Email ID :  "+this.emailId+" , Phone Number : "+this.phoneNumber);
+}
+
+
+
+
+class Student{
+
+        private String name;
+    private String studentID;
+    private String department;
+    private int semester;
+    private String emailId;
+    private String phoneNumber;
+
+    public Student(String name,String studentID,String department,int semester,String emailId,String phoneNumber) {
+        this.name=name;
+        this.studentID=studentID;
+        this.department=department;
+        this.semester=semester;
+        this.emailId=emailId;
+        this.phoneNumber=phoneNumber;
+
+
+    }
+
+    public Student(){
+
+    }
+    //get name 
+    public String  getName(){
+        return this.name;
+    }
+   //set name 
+    public void  setName(String name ){
+         this.name =name ;
+    }
+    // get Student Id 
+    public String  getStudentID(){
+        return this.studentID;
+
+    }
+    //set Student ID;
+    public void setStudentID(String studentID){
+         this.studentID=studentID;
+    }
+    //get Departments 
+    public String getDepartments(){
+        return this.department;
+
+    }
+    //set departments 
+    public void setdepartments(String departments){
+        this.department=departments;
+
+    }
+    //get semester
+    public int getSemester(){
+        return this.semester;
+
+    }
+    //set Semester
+    public void setSemester(int semester){
+         this.semester=semester;
+
+    }
+    //get Email Id
+    public String getEmail(){
+        
+        return this.emailId;
+    
+    }
+    //set Email ID
+    public void setEmail(String email){
+        
+           this.emailId=email;
+
+    }
+
+//note ---> Usually setter do not return anything they just set value 
+
+      
+
+    
+
+    //get Phone Number 
+    public String getPhoneNumber(){
+        return this.phoneNumber;
+    }
+
+    //set Phone number 
+    public void setPhoneNumber(String number){
+         this.phoneNumber=number;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + name + ", ID: " + studentID + ", Dept: " + department + 
+               ", Semester: " + semester + ", Email: " + emailId + ", Phone: " + phoneNumber;
+    }
+
 
 }
 
-}
+
+
+
 
